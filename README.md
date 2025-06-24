@@ -20,3 +20,7 @@ Update the API logic:
   Deployment Notes
 - Use Bicep/ARM templates or Terraform to set up storage lifecycle rules.
 - Archive Function can be scheduled with Durable Functions if large batch processing is needed.
+
+Bonus :-Enhancements
+- Add a metadata index (e.g., in Table Storage or Cosmos DB) for archived blob paths for faster lookups.
+- Use Azure Data Factory instead of Functions for large-scale, managed movement.
