@@ -1,0 +1,20 @@
+import datetime
+from azure.cosmos import CosmosClient
+from azure.storage.blob import BlobServiceClient
+
+def archive_old_records():
+    cosmos_client = CosmosClient(COSMOS_URI, COSMOS_KEY)
+    container = cosmos_client.get_database_client(DB_NAME).get_container_client(CONTAINER_NAME)
+    
+    blob_service = BlobServiceClient.from_connection_string(STORAGE_CONN)
+    blob_container = blob_service.get_container_client("billing-archive")
+
+    threshold_date = datetime.datetime.utcnow() - datetime.timedelta(days=90)
+    
+    for item in container.query_items(f"SELECT * FROM c WHERE c.timestamp < '{threshold_date.isoformat()}'", enable_cross_partition_query=True):
+        record_id = item["id"]
+        ts = datetime.datetime.fromisoformat(item["timestamp"])
+        blob_path = f"{ts.year}/{ts.month}/{ts.day}/{record_id}.json"
+        
+        blob_container.upload_blob(blob_path, data=json.dumps(item), overwrite=True)
+        container.delete_item(item, partition_key=item["partitionKey"])
