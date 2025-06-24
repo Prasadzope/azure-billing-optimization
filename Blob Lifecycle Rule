@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "name": "transition-to-cool",
+      "enabled": true,
+      "type": "Lifecycle",
+      "definition": {
+        "filters": {
+          "blobTypes": [ "blockBlob" ]
+        },
+        "actions": {
+          "baseBlob": {
+            "tierToCool": { "daysAfterModificationGreaterThan": 30 },
+            "tierToArchive": { "daysAfterModificationGreaterThan": 180 }
+          }
+        }
+      }
+    }
+  ]
+}
