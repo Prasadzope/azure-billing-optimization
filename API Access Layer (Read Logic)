@@ -1,0 +1,7 @@
+def get_billing_record(record_id):
+    try:
+        return cosmos_db_client.read_item(item=record_id)
+    except CosmosResourceNotFoundError:
+        # fallback to blob
+        blob_path = find_blob_path(record_id)  # can be indexed or brute-searched
+        return download_blob_as_json(blob_path)
